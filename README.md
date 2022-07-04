@@ -38,7 +38,7 @@ The code contained in `dr_dprintf.s` does the following:
 
 ## Patch your carm95 executable:
 
-Running the following command creates a `CARM95.patched.EXE` file in the same directory.
+Clone this repo, then run the following command. It will create a `CARM95.patched.EXE` file.
 
 ```bash
 ./patch.py c:\path\to\CARM95.EXE

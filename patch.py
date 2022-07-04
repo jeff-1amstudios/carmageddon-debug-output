@@ -1,7 +1,6 @@
 #!/usr/bin/env python3 -u
 
 import sys
-import hashlib
 
 # global variables
 
@@ -48,14 +47,9 @@ def main():
   f.close()
   carm95_binary = bytearray(fc)
 
-  m = hashlib.md5()
-  m.update(carm95_binary)
-  actual_hash = m.hexdigest()
-
-  carm95_binary_expected_hash = 'b83b819eff5ac164610b2407edea8166'
-
-  if actual_hash != carm95_binary_expected_hash:
-    print('ERROR: hash was', actual_hash, 'expected', carm95_binary_expected_hash)
+  if hex(carm95_binary[0x60a45]) != '0x55':  # "push ebp"
+    print('ERROR: your carm95 binary does not appear to be valid - first byte of dr_dprintf is', hex(carm95_binary[0x60a45]), ', expected 0x55')
+    exit(1)
 
   patch_global_vars(carm95_binary)
   patch_sub_461645(carm95_binary)

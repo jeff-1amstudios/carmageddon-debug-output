@@ -9,11 +9,11 @@ fputc = 0x004EE5E0
 vsprintf = 0x004EFD40
 fflush = 0x004F1FE0
 
-# variable locations in carma95 executable
-gRandom_MIDI_tunes = 0x00514938
-str_w = 0x0051493c
-str_diag = 0x0051493e
-scratch = 0x005278D8
+# variable locations in carma95 executable. Overwrites unused 'gRandom_MIDI_tunes' variable
+var_filepointer = 0x00514938
+var_w = 0x0051493c
+var_filename = 0x0051493e
+var_scratch_buffer = 0x005278D8
 
 
 push  ebp
@@ -21,42 +21,50 @@ mov   ebp, esp
 push  ebx
 push  esi
 push  edi
-mov   eax, [gRandom_MIDI_tunes]
+
+# Have we opened the file already?
+mov   eax, [var_filepointer]
 test  eax, eax
 jne    file_already_open
 
-push  str_w   # "w"
-push  str_diag   # "DIAG.TXT"
+# Open DIAGNOST.TXT file for writing
+push  var_w
+push  var_filename
 mov   edx, fopen
-call  edx
+call  edx                     # fopen("DIAGNOST.TXT", "w")
 add   esp, 8
-mov   [gRandom_MIDI_tunes], eax       # gRandom_MIDI_tunes
+mov   [var_filepointer], eax  # store FILE* result in var_filepointer
 
 file_already_open:
 
-lea eax, [ebp+12]  # first vararg
-push eax
-push  [ebp+8]     # fmt
-push  scratch
+
+# Process format string and arguments into final string
+lea eax, [ebp+12]
+push eax                      # address of first var arg
+push  [ebp+8]                 # fmt arg
+push  var_scratch_buffer      # where to write string to
+
 mov   edx, vsprintf
-call  edx
+call  edx                     # vsprintf(fmt, args)
 add   esp, 0xc
 
-push  [gRandom_MIDI_tunes]              # gRandom_MIDI_tunes
-push  scratch
+# Write output string to file
+push  [var_filepointer]
+push  var_scratch_buffer
 mov   edx, fputs
-call  edx
+call  edx                     # fputs(file, msg)
 add   esp, 8
 
-push  [gRandom_MIDI_tunes]   # gRandom_MIDI_tunes
-push  0x0A             # int
+# Append newline
+push  [var_filepointer]
+push  0x0A
 mov   edx, fputc
-call  edx
+call  edx                     # fputc('\n')
 add   esp, 8
 
-push  [gRandom_MIDI_tunes]   # gRandom_MIDI_tunes
+push  [var_filepointer]
 mov   edx, fflush
-call  edx
+call  edx                     # fflush(file)
 add   esp, 4
 
 pop   edi

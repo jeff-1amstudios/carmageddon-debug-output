@@ -1,21 +1,29 @@
+# Re-enables basic debug output in the retail Carmageddon windows95 binary by patching the empty dr_dprintf function.
+# jeff@1amstudios.com
 
-
-
-
-# functions defined in carma95 executable
+###############################################################################
+# Virtual address of useful functions in carma95 executable
+###############################################################################
 fputs = 0x004EC550
 fopen = 0x004EBF40
 fputc = 0x004EE5E0
 vsprintf = 0x004EFD40
 fflush = 0x004F1FE0
 
-# variable locations in carma95 executable. Overwrites unused 'gRandom_MIDI_tunes' variable
+
+###############################################################################
+# Virtual address of variables in carm95 executable.
+# Overwrites unused 'int gRandom_MIDI_tunes[3]' variable
+###############################################################################
 var_filepointer = 0x00514938
 var_w = 0x0051493c
 var_filename = 0x0051493e
 var_scratch_buffer = 0x005278D8
 
 
+###############################################################################
+# Shell code function starts here
+###############################################################################
 push  ebp
 mov   ebp, esp
 push  ebx

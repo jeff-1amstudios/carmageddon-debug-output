@@ -36,7 +36,7 @@ The code contained in `dr_dprintf.s` does the following:
 6) Returns back to the caller of the original `dr_dprintf` function
 
 
-## Patch your `carm95` executable:
+## Patch your carm95 executable:
 
 Running the following command creates a `CARM95.patched.EXE` file in the same directory.
 

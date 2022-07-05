@@ -45,7 +45,7 @@ Grab `patch.py` from this repo, then run the following command. It will create a
 ```
 
 
-## Making changes to the payload
+## Making changes to the replacement code
 If you make a change to `dr_dprintf.s`, it needs to be re-assembled into raw x86 code and updated in `patch.py`.
 
 ```bash

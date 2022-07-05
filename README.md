@@ -45,8 +45,8 @@ Grab `patch.py` from this repo, then run the following command. It will create a
 ```
 
 
-## Making changes to the shellcode payload
-If you make a change to `dr_dprintf.s`, it needs to be re-assembled into `dr_dprintf.o.raw`. This file is expected to only contain raw 32-bit x86 code.
+## Making changes to the payload
+If you make a change to `dr_dprintf.s`, it needs to be re-assembled into raw x86 code and updated in `patch.py`.
 
 ```bash
 # compile assembly into x86 binary code

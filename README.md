@@ -12,13 +12,13 @@ void dr_dprintf(char *message, args...) {
 }
 ```
 
-In the retail executable, `DEBUG_ENABLED` is not defined so we don't get any debug output. However, this function is still being called with all sorts of interesting messages, so it would be nice to re-enable it!
+In the retail executable, none of the code inside the `#ifdef` is included, so nothing is logged. However, this function is still being called with all sorts of interesting messages, so it would be nice to re-enable it!
 
 ## How it works
 
 ### Executable patches
 
-We make three patches in the carm95 executable:
+We make three patches in `CARM95.EXE`.
 
 1) Overwrite unused global variables related to MIDI playback (`gRandom_MIDI_tunes`, `gRandom_Rockin_MIDI_tunes`) to give us a place to store the output filename and file pointer.
 2) Insert a `JMP` instruction into the original `dprintf` debug output function to call our shellcode
@@ -36,12 +36,35 @@ The code contained in `dr_dprintf.s` does the following:
 6) Returns back to the caller of the original `dr_dprintf` function
 
 
-## Patch your carm95 executable:
+## Patch your CARM95.EXE:
 
 Grab `patch.py` from this repo, then run the following command. It will create a `CARM95.patched.EXE` file.
 
 ```bash
 ./patch.py c:\path\to\CARM95.EXE
+```
+
+When `CARM95.patched.EXE` is run, it will log debug messages into `DIAGNOST.TXT` in the same directory.
+
+Example output:
+```
+...
+Start of LoadInOppoPaths()...
+ReallocExtraPathNodes(): Allocated 4544 bytes for 71 path nodes
+ReallocExtraPathSections(): Allocated 4000 bytes for 100 path sections
+End of LoadInOppoPaths(), totals:
+Nodes: 71
+Sections: 100
+Car 'Screwie Lewie', car_ID 200
+Car 'Stig O'Sore', car_ID 201
+Car 'Auto scum', car_ID 202
+Car 'Kutter', car_ID 203
+Car 'Ed 101', car_ID 204
+StartRecordingTrail - starting from scratch
+Screwie Lewie: Choosing new objective because we have to...
+Screwie Lewie: NewObjective() - type 1
+Screwie Lewie: ProcessCompleteRace() - new objective started
+...
 ```
 
 

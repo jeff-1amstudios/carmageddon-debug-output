@@ -38,19 +38,22 @@ The code contained in `dr_dprintf.s` does the following:
 
 ## Patch your carm95 executable:
 
-Clone this repo, then run the following command. It will create a `CARM95.patched.EXE` file.
+Grab `patch.py` from this repo, then run the following command. It will create a `CARM95.patched.EXE` file.
 
 ```bash
 ./patch.py c:\path\to\CARM95.EXE
 ```
 
 
-
 ## Making changes to the shellcode payload
 If you make a change to `dr_dprintf.s`, it needs to be re-assembled into `dr_dprintf.o.raw`. This file is expected to only contain raw 32-bit x86 code.
 
 ```bash
+# compile assembly into x86 binary code
 cc -c -masm=intel -m32 dr_dprintf.s
 objcopy  --dump-section .text=dr_dprintf.o.raw dr_dprintf.o
+
+# update 'payload_base64' in patch.py
+sed -i "" "s#payload_base64.*#payload_base64=\'$(base64 dr_dprintf.o.raw)\'#" patch.py
 ```
 

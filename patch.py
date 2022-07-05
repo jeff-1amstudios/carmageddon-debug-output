@@ -1,6 +1,7 @@
 #!/usr/bin/env python3 -u
 
 import sys
+import base64
 
 # global variables
 
@@ -13,14 +14,17 @@ import sys
 #
 # 005278D8 scratch [512]
 
+# See README.md for how this is generated
+payload_base64='VYnlU1ZXoThJUQCFwHUZaDxJUQBoPklRALpAv04A/9KDxAijOElRAI1FDFD/dQho2HhSALpA/U4A/9KDxAz/NThJUQBo2HhSALpQxU4A/9KDxAj/NThJUQBqCrrg5U4A/9KDxAj/NThJUQC64B9PAP/Sg8QEX15bycM='
+
 
 # Overwrite sub_4614F1 with our payload
 def patch_sub_4614F1(carm95_binary):
-  f = open('dr_dprintf.o.raw', mode = 'rb')
-  fc = f.read()
-  f.close()
-  for i in range(len(fc)):
-    carm95_binary[0x608f1 + i] = fc[i]
+  base64_bytes = payload_base64='VYnlU1ZXoThJUQCFwHUZaDxJUQBoPklRALpAv04A/9KDxAijOElRAI1FDFD/dQho2HhSALpA/U4A/9KDxAz/NThJUQBo2HhSALpQxU4A/9KDxAj/NThJUQBqCrrg5U4A/9KDxAj/NThJUQC64B9PAP/Sg8QEX15bycM='
+  message_bytes = base64.b64decode(base64_bytes)
+
+  for i in range(len(message_bytes)):
+    carm95_binary[0x608f1 + i] = message_bytes[i]
 
 # Patch dr_dprintf to jump to our new function
 def patch_sub_461645(carm95_binary):
@@ -49,7 +53,7 @@ def main():
 
   if hex(carm95_binary[0x60a45]) != '0x55':  # "push ebp"
     print('ERROR: your carm95 binary does not appear to be valid - first byte of dr_dprintf is', hex(carm95_binary[0x60a45]), ', expected 0x55')
-    exit(1)
+    return 1
 
   patch_global_vars(carm95_binary)
   patch_sub_461645(carm95_binary)
@@ -60,6 +64,7 @@ def main():
   f.write(carm95_binary)
   f.close()
   print('Patched executable written to', new_path)
+  return 0
 
 
 if __name__ == '__main__':
